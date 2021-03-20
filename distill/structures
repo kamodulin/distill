@@ -1,0 +1,9 @@
+import abc
+import abc as other
+from abc import xyz
+import abc.xyz
+
+import[\s*](\w*)
+
+
+stdlib

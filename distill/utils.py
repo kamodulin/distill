@@ -25,26 +25,28 @@ def get_files(path: str) -> list:
 
 def local_modules(path: str) -> set:
     """Return a set of local files and modules in project directory."""
-    locallib = set()
+    modules = set()
 
     for _, dirs, files in walk(path):
         for d in dirs:
-            locallib.add(d)
+            modules.add(d)
         for f in files:
-            locallib.add(os.path.splitext(f)[0])
+            modules.add(os.path.splitext(f)[0])
 
-    return locallib
+    return modules
 
 
 def stdlib_modules() -> set:
     """Returns a set of standard library modules."""
-    stdlib = set()
+    modules = set()
+    
+    stdlib = os.path.join(os.path.dirname(__file__), "stdlib")
 
-    with open("stdlib", "rb") as f:
+    with open(stdlib, "r") as f:
         for module in f:
-            stdlib.add(module.rstrip())
+            modules.add(module.rstrip())
 
-    return stdlib
+    return modules
 
 
 def write(path: str, modules: set) -> None:

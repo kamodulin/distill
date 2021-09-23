@@ -12,6 +12,7 @@ setup(
     url="https://github.com/kamodulin/distill",
     author="Kamran Ahmed",
     packages=find_packages(),
+    include_package_data=True,
     zip_safe=False,
     entry_points = {
         "console_scripts": ["distill=distill.distill:main"],

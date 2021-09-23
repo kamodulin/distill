@@ -3,7 +3,7 @@ import ast
 import logging
 import os
 
-from utils import *
+from .utils import *
 
 
 def extract_all_imports(files: list) -> set:

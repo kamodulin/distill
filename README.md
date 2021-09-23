@@ -2,6 +2,7 @@
 
 distill is a Python utility to extract necessary third-party imports from a project. I created this utility since I develop projects with more packages (e.g. jupyter, pandas) than necessary for a final product.
 
+## Features
 
 ## Installation
 <!-- Distill can be installed via pypi
@@ -10,36 +11,36 @@ pip install distill
 ``` -->
 
 Clone this repo and enter this command from the root directory
-```bash
+```
 pip install .
 ```
 
 *Note*: make sure you've activated your Python environment where you want distill to be installed.
 
 
-## Using distill
-*Make sure to activate the environment where distill is installed.*
-
+## Using distill to clean up requirements
 Go to the root of your project directory
-```bash
+```
 cd path/to/project
 ```
 
-Run distill (options/flags will be added later)
-```bash
-distill
+```
+Usage:
+    distill [options]
+
+Options:
+    -d, --dir       Directory to perform distillation (defaults to current working directory).
+    -s, --save      Save distilled requirements to file. (defaults to distill.txt in current working directory).
+
 ```
 
 Output
-```bash
-Necessary imports:
-cv2
-numpy
-PIL
-tensorflow
+```
+Imports: ['cv2', 'numpy', 'PIL', 'tensorflow']
+Writing distilled requirements to <save>/distill.txt
 ```
 
-Features/ideas I would like to implement:
+<!-- Features/ideas I would like to implement:
 - [ ] Default file/dir exclusions
 - [ ] A list of packages to uninstall that the user can uninstall via pip
 - [ ] Find long names for packages. e.g. cv2:opencv-python, bs4:beautifulsoup4
@@ -49,4 +50,4 @@ Features/ideas I would like to implement:
     - [ ] Verbose
     - [ ] Excludes
     - [ ] Override requirements.txt or output a distill.txt
-    - [ ] Different output formats. e.g. yml, txt
+    - [ ] Different output formats. e.g. yml, txt -->

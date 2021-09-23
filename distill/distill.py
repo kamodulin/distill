@@ -1,63 +1,75 @@
 import argparse
+import ast
+import logging
 import os
-import re
 
-from .utils import *
-
-
-def get_files(path: str) -> list:
-    """
-    Walk through a directory and return a list of python files.
-    """
-    py_files = []
-
-    for root, dirs, files in walk(path):
-        for name in files:
-            py_files.append(os.path.join(root, name))
-
-    return py_files
+from utils import *
 
 
-def parse_file(content: str) -> list:
-    """
-    Parse a python file and extract import statements.
-    """
-    return re.findall(r"^(?:from|import)[\s*](\w*)\b", content, flags=re.MULTILINE)
-
-
-def extract_all_imports(files: list) -> list:
-    """
-    Extract all import statements from a list of files and exclude local imports.
-    """
-    imports = []
+def extract_all_imports(files: list) -> set:
+    """Extracts all import statements from a list of files."""
+    imports = set()
 
     for f in files:
         with open(f) as data:
             try:
                 content = data.read()
-                modules = [m for m in parse_file(content) if m not in files] # move this out to a filter fn
-                imports.append(modules)
-            except:
-                pass            
-    
-    return unique(flatten(imports))
+                tree = ast.parse(content)
+
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.Import):
+                        for sub in node.names:
+                            imports.add(sub.name)
+
+                    elif isinstance(node, ast.ImportFrom):
+                        imports.add(node.module)
+
+            except Exception as e:
+                raise e
+
+    imports = set(i.split(".")[0] for i in imports if i)
+
+    return imports
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Utility to extract necessary imports from a project.")
-    parser.add_argument("-d", "--dir", action="store", default=os.getcwd(), help="Directory to perform distillation.")
+    parser = argparse.ArgumentParser(
+        description="Utility to extract necessary imports from a project.")
+
+    parser.add_argument(
+        "-d",
+        "--dir",
+        action="store",
+        default=os.getcwd(),
+        help="Directory to perform distillation.")
+
+    parser.add_argument(
+        "-s",
+        "--save",
+        action="store",
+        help="Save distilled requirements to file.")
+
     args = parser.parse_args()
 
+    logging.basicConfig(format='%(message)s', level=logging.INFO)
+
+    if not os.path.isdir(args.dir):
+        logging.error("Invalid directory.")
+        return
+
     files = get_files(args.dir)
+
     raw_imports = extract_all_imports(files)
-    nonlocal_imports = remove_local_modules(raw_imports, args.dir)
-    imports = remove_std_modules(nonlocal_imports)
+    local = local_modules(args.dir)
+    stdlib = stdlib_modules()
+    imports = sorted(raw_imports - local - stdlib)
 
-    if imports:
-        print("Necessary imports:")
-
-        for i in imports:
-            print(i)
+    if not imports:
+        logging.info("No imports found!")
 
     else:
-        print("No imports found!")
+        logging.info(f"Imports: {imports}")
+
+        save_file = args.save if args.save else args.dir + "/distill.txt"
+        logging.info(f"Writing distilled requirements to {save_file}")
+        write(save_file, imports)

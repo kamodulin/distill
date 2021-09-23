@@ -52,6 +52,5 @@ def stdlib_modules() -> set:
 def write(path: str, modules: set) -> None:
     """Writes a distill.txt file with module names."""
     with open(path, "w") as f:
-        f.write("# *WARNING* Module names may not match package names")
         for module in modules:
-            f.write("\n" + module)
+            f.write(module + "\n")

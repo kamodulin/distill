@@ -1,6 +1,6 @@
 # distill
 
-distill is a Python utility to extract necessary third-party imports from a project. I created this utility since I develop projects with more packages (e.g. jupyter, pandas) than necessary for a final product.
+distill is a Python utility to extract necessary third-party imports from a project. I created this utility since I develop projects with more packages (e.g. jupyter, pandas) than necessary for a final product. Note that package names may differ from their import names (e.g. scikit-learn:sklearn, beautifulsoup4:bs4). This is not easy to solve so it's left up to the user to handle.
 
 ## Features
 
